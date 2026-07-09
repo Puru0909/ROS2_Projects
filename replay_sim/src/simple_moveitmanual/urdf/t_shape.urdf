@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<robot name="t_shape">
+
+  <!-- ========== MATERIALS ========== -->
+  <material name="orange">
+    <color rgba="1.0 0.5 0.0 1.0"/>
+  </material>
+
+  <!-- ========== BASE LINK (dummy root for Gazebo spawner) ========== -->
+  <link name="t_base">
+    <inertial>
+      <mass value="0.001"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0"
+               iyy="0.000001" iyz="0"
+               izz="0.000001"/>
+    </inertial>
+  </link>
+
+  <!-- ========== VERTICAL BAR (stem of T) ========== -->
+  <link name="vertical_bar">
+    <visual>
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.06 0.06 0.25"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.125" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.06 0.06 0.25"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <origin xyz="0 0 0.125"/>
+      <inertia ixx="0.001117" ixy="0" ixz="0"
+               iyy="0.000120" iyz="0"
+               izz="0.001117"/>
+    </inertial>
+  </link>
+
+  <!-- ========== HORIZONTAL BAR (top of T) ========== -->
+  <link name="horizontal_bar">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.20 0.06 0.06"/>
+      </geometry>
+      <material name="orange"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.20 0.06 0.06"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.02"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.000060" ixy="0" ixz="0"
+               iyy="0.000363" iyz="0"
+               izz="0.000363"/>
+    </inertial>
+  </link>
+
+  <!-- ========== JOINTS ========== -->
+
+  <!-- Base to vertical bar -->
+  <joint name="base_to_vertical" type="fixed">
+    <parent link="t_base"/>
+    <child link="vertical_bar"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Vertical bar to horizontal bar -->
+  <!-- horizontal bar sits at the TOP of the vertical bar (0.25m up) -->
+  <joint name="vertical_to_horizontal" type="fixed">
+    <parent link="vertical_bar"/>
+    <child link="horizontal_bar"/>
+    <origin xyz="0 0 0.25" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========== GAZEBO PHYSICS PROPERTIES ========== -->
+  <gazebo reference="vertical_bar">
+    <material>Gazebo/Orange</material>
+    <mu1>0.3</mu1>
+    <mu2>0.3</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+  </gazebo>
+
+  <gazebo reference="horizontal_bar">
+    <material>Gazebo/Orange</material>
+    <mu1>0.05</mu1>
+    <mu2>0.05</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+  </gazebo>
+
+</robot>

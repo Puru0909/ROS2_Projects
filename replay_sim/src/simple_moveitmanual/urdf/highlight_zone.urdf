@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot name="highlight_zone">
+
+  <!-- ========== ROOT LINK (fixed to world) ========== -->
+  <link name="highlight_base">
+    <inertial>
+      <mass value="0.0001"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0"
+               iyy="0.000001" iyz="0"
+               izz="0.000001"/>
+    </inertial>
+  </link>
+
+  <!-- ========== VISUAL ZONE LINK (NO collision) ========== -->
+  <link name="zone_plane">
+
+    <!-- VISUAL ONLY — green semi-transparent rectangle -->
+    <visual>
+      <origin xyz="0 0 0.015" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.35 0.35 0.03"/>
+      </geometry>
+      <material name="highlight_green">
+        <color rgba="0.0 1.0 0.0 0.4"/>
+      </material>
+    </visual>
+
+    <!-- NO <collision> block here intentionally -->
+    <!-- T-shape passes through this freely -->
+
+    <inertial>
+      <mass value="0.0001"/>
+      <origin xyz="0 0 0"/>
+      <inertia ixx="0.000001" ixy="0" ixz="0"
+               iyy="0.000001" iyz="0"
+               izz="0.000001"/>
+    </inertial>
+
+  </link>
+
+  <!-- ========== JOINT — fixed to world ========== -->
+  <joint name="highlight_fixed" type="fixed">
+    <parent link="highlight_base"/>
+    <child link="zone_plane"/>
+    <origin xyz="0 0 0.015" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========== GAZEBO — visual material + no collision ========== -->
+<gazebo reference="zone_plane">
+  <material>Gazebo/Green</material>
+  <transparency>0.5</transparency>
+  <selfCollide>false</selfCollide>
+  <static>true</static>
+</gazebo>
+
+</robot>
