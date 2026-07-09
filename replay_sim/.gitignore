@@ -1,11 +1,14 @@
-# ROS2
+# VS Code
+.vscode/
+.idea/
+
+# ROS2 build files
 build/
 install/
 log/
 
-# IDE
-.vscode/
-.idea/
+# Colcon
+.colcon/
 
 # Python cache
 __pycache__/
