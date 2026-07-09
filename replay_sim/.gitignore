@@ -1,10 +1,11 @@
-# ROS2 generated files
+# ROS2
 build/
 install/
 log/
 
-# VS Code
+# IDE
 .vscode/
+.idea/
 
 # Python cache
 __pycache__/
