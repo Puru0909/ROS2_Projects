@@ -65,34 +65,34 @@ def generate_launch_description():
 
     t_shape_urdf = os.path.join(package_share, "urdf", "t_shape.urdf")
     spawn_t_shape = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=[
-    "-file", t_shape_urdf,
-    "-entity", "t_shape",
-    "-x", "0.37",
-    "-y", "0.0",
-    "-z", "0.0",
-    # "-R", "1.5708",    # ← lay on side
-    "-Y", "0.0",
-],
-        output="screen",
-    )
+    package="gazebo_ros",
+    executable="spawn_entity.py",
+    arguments=[
+        "-file", t_shape_urdf,
+        "-entity", "t_shape",
+        "-x", "0.35",
+        "-y", "0.0",
+        "-z", "0.0",
+        "-Y", "1.5708",  # horizontal bar NOW faces arm along X
+    ],
+    output="screen",
+)
+
 
     highlight_sdf = os.path.join(package_share, "urdf", "highlight_zone.sdf")
     spawn_highlight = Node(
-        package="gazebo_ros",
-        executable="spawn_entity.py",
-        arguments=[
-            "-file", highlight_sdf,
-            "-entity", "highlight_zone",
-            "-x", "0.37",
-            "-y", "-0.40",
-            "-z", "0.0",
-            "-Y", "0.0",
-        ],
-        output="screen",
-    )
+    package="gazebo_ros",
+    executable="spawn_entity.py",
+    arguments=[
+        "-file", highlight_sdf,
+        "-entity", "highlight_zone",
+        "-x", "0.65",
+        "-y", "0.0",
+        "-z", "0.0",
+        "-Y", "1.5708",
+    ],
+    output="screen",
+)
 
     # ros2_control_node = Node(
     #     package="controller_manager",
