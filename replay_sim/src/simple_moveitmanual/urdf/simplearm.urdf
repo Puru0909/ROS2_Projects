@@ -170,7 +170,7 @@
   <gazebo>
     <plugin name="gazebo_ros2_control"
             filename="libgazebo_ros2_control.so">
-      <parameters>/home/purushottam/Downloads/replay_sim/install/simple_moveitmanual/share/simple_moveitmanual/config/ros2_controllers.yaml</parameters>
+      <parameters>/home/purushottam/Downloads/ROS2_Projects/replay_sim/install/simple_moveitmanual/share/simple_moveitmanual/config/ros2_controllers.yaml</parameters>
     </plugin>
   </gazebo>
 
