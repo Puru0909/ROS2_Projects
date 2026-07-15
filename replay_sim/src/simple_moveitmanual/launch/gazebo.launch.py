@@ -72,8 +72,7 @@ def generate_launch_description():
         "-entity", "t_shape",
         "-x", "0.3",
         "-y", "0.25",
-        "-z", "0.03",
-        "-R", "1.5708",   # ← lay T flat on ground
+        "-z", "0.0",
         "-Y", "0.0",
     ],
     output="screen",
@@ -88,7 +87,7 @@ def generate_launch_description():
         "-file", highlight_sdf,
         "-entity", "highlight_zone",
         "-x", "0.3",
-        "-y", "-0.3",
+        "-y", "0.0",     # ← directly where T-shape falls
         "-z", "0.0",
         "-Y", "0.0",
     ],
