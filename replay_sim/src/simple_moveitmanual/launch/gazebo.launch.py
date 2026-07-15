@@ -70,10 +70,10 @@ def generate_launch_description():
     arguments=[
         "-file", t_shape_urdf,
         "-entity", "t_shape",
-       "-x", "0.3",
-"-y", "0.25",
-"-z", "0.0",
-"-Y", "0.0",
+        "-x", "0.3",
+        "-y", "0.25",
+        "-z", "0.0",
+        "-Y", "0.0",
     ],
     output="screen",
 )
@@ -81,17 +81,17 @@ def generate_launch_description():
 
     highlight_sdf = os.path.join(package_share, "urdf", "highlight_zone.sdf")
     spawn_highlight = Node(
-    package="gazebo_ros",
-    executable="spawn_entity.py",
-    arguments=[
-        "-file", highlight_sdf,
-       "-x", "0.15",
-"-y", "0.0",
-"-z", "0.0",
-"-Y", "0.0",,
-    ],
-    output="screen",
-)
+        package="gazebo_ros",
+        executable="spawn_entity.py",
+        arguments=[
+            "-file", highlight_sdf,
+            "-x", "0.15",
+            "-y", "0.0",
+            "-z", "0.0",
+            "-Y", "0.0",
+        ],
+        output="screen",
+    )
 
     # ros2_control_node = Node(
     #     package="controller_manager",
