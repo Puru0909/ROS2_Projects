@@ -65,19 +65,18 @@ def generate_launch_description():
 
     t_shape_urdf = os.path.join(package_share, "urdf", "t_shape.urdf")
     spawn_t_shape = Node(
-    package="gazebo_ros",
-    executable="spawn_entity.py",
-    arguments=[
-        "-file", t_shape_urdf,
-        "-entity", "t_shape",
-        "-x", "0.3",
-        "-y", "0.25",
-        "-z", "0.0",
-        "-Y", "0.0",
-    ],
-    output="screen",
-)
-
+        package="gazebo_ros",
+        executable="spawn_entity.py",
+        arguments=[
+            "-file", t_shape_urdf,
+            "-entity", "t_shape",
+            "-x", "0.3",
+            "-y", "0.25",
+            "-z", "0.0",
+            "-Y", "0.0",
+        ],
+        output="screen",
+    )
 
     highlight_sdf = os.path.join(package_share, "urdf", "highlight_zone.sdf")
     spawn_highlight = Node(
@@ -85,6 +84,7 @@ def generate_launch_description():
         executable="spawn_entity.py",
         arguments=[
             "-file", highlight_sdf,
+            "-entity", "highlight_zone",
             "-x", "0.15",
             "-y", "0.0",
             "-z", "0.0",
@@ -92,17 +92,6 @@ def generate_launch_description():
         ],
         output="screen",
     )
-
-    # ros2_control_node = Node(
-    #     package="controller_manager",
-    #     executable="ros2_control_node",
-    #     parameters=[
-    #         {"robot_description": robot_description_raw},
-    #         ros2_controllers_path,
-    #         {"use_sim_time": True},
-    #     ],
-    #     output="screen",
-    # )
 
     joint_state_broadcaster_spawner = Node(
         package="controller_manager",
@@ -168,7 +157,6 @@ def generate_launch_description():
         spawn_robot,
         spawn_t_shape,
         spawn_highlight,
-        # ros2_control_node,
         delayed_controllers,
         delayed_moveit,
         delayed_rviz,
