@@ -70,8 +70,8 @@ def generate_launch_description():
         arguments=[
             "-file", t_shape_urdf,
             "-entity", "t_shape",
-            "-x", "0.55",
-            "-y", "0.3",
+            "-x", "0.35",
+            "-y", "0.0",
             "-z", "0.0",
             "-Y", "0.0",
         ],
@@ -85,8 +85,8 @@ def generate_launch_description():
         arguments=[
             "-file", highlight_sdf,
             "-entity", "highlight_zone",
-            "-x", "0.45",
-            "-y", "0.0",
+            "-x", "0.35",
+            "-y", "-0.35",
             "-z", "0.0",
             "-Y", "0.0",
         ],
