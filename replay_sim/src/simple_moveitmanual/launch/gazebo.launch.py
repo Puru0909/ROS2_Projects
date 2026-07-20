@@ -85,8 +85,8 @@ def generate_launch_description():
         arguments=[
             "-file", highlight_sdf,
             "-entity", "highlight_zone",
-            "-x", "0.20",   # 0.20 and -0.10
-            "-y", "0.32",
+            "-x", "0.20",   # 0.20 and -0.10 yes
+            "-y", "0.32",   # 0.32 and 0.10 yes
             "-z", "0.0",
             "-Y", "0.0",
         ],

@@ -20,6 +20,8 @@ def generate_launch_description():
                     .to_moveit_configs()
     )
 
+
+    
     move_group_node = Node(
         package="moveit_ros_move_group",
         executable="move_group",
@@ -44,4 +46,4 @@ def generate_launch_description():
         is_sim_arg,
         move_group_node,
         rviz_node
-    ])
+    ]) 
