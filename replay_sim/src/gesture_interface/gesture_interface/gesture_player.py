@@ -2,6 +2,7 @@ import threading
 import rclpy
 from rclpy.action import ActionClient
 from rclpy.executors import SingleThreadedExecutor
+from action_msgs.msg import GoalStatus
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectory
 
@@ -11,17 +12,17 @@ class GesturePlayer:
     def __init__(self, node):
         self.node = node
 
-        # Isolated node — completely separate from GestureManager
+        # Isolated node — completely separate from GestureManager's executor
         self.action_node = rclpy.create_node('gesture_player_client')
 
-        # Action client on isolated node
         self.client = ActionClient(
             self.action_node,
             FollowJointTrajectory,
             "/arm_controller/follow_joint_trajectory",
         )
 
-        # Isolated executor spinning in its own thread permanently
+        # Isolated executor spinning in its own thread permanently —
+        # this is what avoids the deadlock we hit earlier
         self.executor = SingleThreadedExecutor()
         self.executor.add_node(self.action_node)
         self._exec_thread = threading.Thread(
@@ -42,9 +43,23 @@ class GesturePlayer:
         def on_result(future):
             # Runs in isolated executor thread
             try:
-                future.result()
-                result_container[0] = True
-                self.node.get_logger().info("Trajectory execution completed")
+                result_wrapper = future.result()
+                status = result_wrapper.status
+                error_code = result_wrapper.result.error_code
+                error_string = result_wrapper.result.error_string
+
+                if (status == GoalStatus.STATUS_SUCCEEDED
+                        and error_code == FollowJointTrajectory.Result.SUCCESSFUL):
+                    result_container[0] = True
+                    self.node.get_logger().info(
+                        "Trajectory execution completed successfully"
+                    )
+                else:
+                    result_container[0] = False
+                    self.node.get_logger().error(
+                        f"Trajectory did not succeed — status={status}, "
+                        f"error_code={error_code}, error_string='{error_string}'"
+                    )
             except Exception as e:
                 self.node.get_logger().error(f"Result error: {e}")
                 result_container[0] = False
@@ -68,20 +83,17 @@ class GesturePlayer:
                 done_event.set()
 
         def submit_goal():
-            # THIS RUNS IN ISOLATED EXECUTOR THREAD via timer
-            # send_goal_async called here → future registered with isolated executor
+            # Runs in isolated executor thread via timer —
+            # this is what let send_goal_async register with the right executor
             goal = FollowJointTrajectory.Goal()
             goal.trajectory = trajectory
             goal_future = self.client.send_goal_async(goal)
             goal_future.add_done_callback(on_goal_response)
-            # Destroy this timer — only fire once
             if timer_container[0] is not None:
                 self.action_node.destroy_timer(timer_container[0])
 
-        # Add timer to isolated node — fires in isolated executor thread
         timer_container[0] = self.action_node.create_timer(0.01, submit_goal)
 
-        # Wait for result — isolated executor handles everything
         done_event.wait(timeout=60.0)
 
         if result_container[0] is None:
