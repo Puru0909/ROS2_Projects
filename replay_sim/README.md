@@ -87,6 +87,9 @@ replay_sim/
 │       │   └── task_orchestrator_node.py
 │       └── launch/
 │           └── task_orchestrator.launch.py
+│
+└── tools/
+    └── fix_gesture_timing.py       # Standalone utility - see "Recording a New Gesture" below
 ```
 
 ---
@@ -205,7 +208,17 @@ ros2 service call /start_recording gesture_interface_msgs/srv/StartRecording "{}
 ros2 service call /stop_save_recording gesture_interface_msgs/srv/StopSaveRecording "{name: 'my_gesture'}"
 ```
 
-**One thing to know:** the recorder samples continuously from start to stop, including any real-world time spent pausing between moves. A recording session that takes several minutes of wall-clock time will produce a trajectory that takes just as long to *replay*, because `JointTrajectoryController` paces execution against each point's recorded timestamp. If that happens, don't uniformly rescale the timestamps — that speeds up the actual motion segments too and can change the contact dynamics of the push. Instead, strip out only the genuinely idle stretches (consecutive samples with near-identical joint positions) and cap any remaining pause to a short fixed duration, leaving every real movement at its original recorded speed.
+**One thing to know:** the recorder samples continuously from start to stop, including any real-world time spent pausing between moves. A recording session that takes several minutes of wall-clock time will produce a trajectory that takes just as long to *replay*, because `JointTrajectoryController` paces execution against each point's recorded timestamp.
+
+If that happens, don't uniformly rescale the timestamps — that speeds up the actual motion segments too and can change the contact dynamics of the push. `tools/fix_gesture_timing.py` handles this correctly: it strips out only the genuinely idle stretches (consecutive samples with near-identical joint positions) and caps any remaining pause to a short fixed duration, leaving every real movement at its original recorded speed.
+
+```bash
+python3 tools/fix_gesture_timing.py \
+  install/gesture_interface/share/gesture_interface/gestures/my_gesture.yaml \
+  install/gesture_interface/share/gesture_interface/gestures/my_gesture.yaml
+```
+
+It's a standalone script — no ROS 2 sourcing or build required, just `pyyaml`. Run `python3 tools/fix_gesture_timing.py --help` for the tunable thresholds.
 
 To add a new task once a gesture is recorded, add one line to the `task_map` dictionary in `task_orchestrator_node.py`:
 ```python
