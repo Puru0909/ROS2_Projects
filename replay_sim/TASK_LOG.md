@@ -115,4 +115,8 @@ The T-shape does not reset itself after a push. To re-run the demonstration from
 ```bash
 ros2 service call /delete_entity gazebo_msgs/srv/DeleteEntity "{name: 't_shape'}"
 ros2 run gazebo_ros spawn_entity.py -file <path-to>/t_shape.urdf -entity t_shape -x 0.20 -y 0.0 -z 0.0 -Y 0.0
+
+
+Also if we want to know goal reached we can check from this command after ctrl+c my terminal 1
+grep -h "Goal reached" ~/.ros/log/*/launch.log 2>/dev/null | tail -3
 ```
