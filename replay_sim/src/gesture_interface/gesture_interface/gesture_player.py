@@ -11,34 +11,36 @@ class GesturePlayer:
     def __init__(self, node):
         self.node = node
 
-        # Separate node — completely isolated from GestureManager executor
-        self.action_node = rclpy.create_node('gesture_player_action')
+        # Isolated node — completely separate from GestureManager
+        self.action_node = rclpy.create_node('gesture_player_client')
 
+        # Action client on isolated node
         self.client = ActionClient(
             self.action_node,
             FollowJointTrajectory,
             "/arm_controller/follow_joint_trajectory",
         )
 
-        # Dedicated executor — runs in its own thread
-        # Completely independent from GestureManager executor
+        # Isolated executor spinning in its own thread permanently
         self.executor = SingleThreadedExecutor()
         self.executor.add_node(self.action_node)
-        self.executor_thread = threading.Thread(
+        self._exec_thread = threading.Thread(
             target=self.executor.spin,
             daemon=True
         )
-        self.executor_thread.start()
+        self._exec_thread.start()
 
     def play(self, trajectory: JointTrajectory):
         if not self.client.wait_for_server(timeout_sec=5.0):
-            self.node.get_logger().error("Controller action server not available")
+            self.node.get_logger().error("Action server not available")
             return False
 
         done_event = threading.Event()
         result_container = [None]
+        timer_container = [None]
 
         def on_result(future):
+            # Runs in isolated executor thread
             try:
                 future.result()
                 result_container[0] = True
@@ -50,6 +52,7 @@ class GesturePlayer:
                 done_event.set()
 
         def on_goal_response(future):
+            # Runs in isolated executor thread
             try:
                 goal_handle = future.result()
                 if not goal_handle.accepted:
@@ -57,7 +60,6 @@ class GesturePlayer:
                     result_container[0] = False
                     done_event.set()
                     return
-                # get_result_async runs in separate executor thread — no deadlock
                 result_future = goal_handle.get_result_async()
                 result_future.add_done_callback(on_result)
             except Exception as e:
@@ -65,15 +67,21 @@ class GesturePlayer:
                 result_container[0] = False
                 done_event.set()
 
-        goal = FollowJointTrajectory.Goal()
-        goal.trajectory = trajectory
+        def submit_goal():
+            # THIS RUNS IN ISOLATED EXECUTOR THREAD via timer
+            # send_goal_async called here → future registered with isolated executor
+            goal = FollowJointTrajectory.Goal()
+            goal.trajectory = trajectory
+            goal_future = self.client.send_goal_async(goal)
+            goal_future.add_done_callback(on_goal_response)
+            # Destroy this timer — only fire once
+            if timer_container[0] is not None:
+                self.action_node.destroy_timer(timer_container[0])
 
-        # Processed by separate executor thread — not GestureManager thread
-        future = self.client.send_goal_async(goal)
-        future.add_done_callback(on_goal_response)
+        # Add timer to isolated node — fires in isolated executor thread
+        timer_container[0] = self.action_node.create_timer(0.01, submit_goal)
 
-        # GestureManager service thread waits here
-        # Separate executor handles all action callbacks freely
+        # Wait for result — isolated executor handles everything
         done_event.wait(timeout=60.0)
 
         if result_container[0] is None:
