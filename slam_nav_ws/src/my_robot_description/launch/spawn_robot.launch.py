@@ -10,13 +10,19 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     pkg_share = get_package_share_directory('my_robot_description')
     xacro_file = os.path.join(pkg_share, 'urdf', 'my_robot.urdf.xacro')
+    world_file = os.path.join(pkg_share, 'worlds', 'test_room.sdf')
+
     robot_description = Command(['xacro ', xacro_file])
 
     gz_sim = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')
+            os.path.join(
+                get_package_share_directory('ros_gz_sim'),
+                'launch',
+                'gz_sim.launch.py'
+            )
         ),
-        launch_arguments={'gz_args': 'empty.sdf'}.items()
+        launch_arguments={'gz_args': world_file}.items()
     )
 
     robot_state_publisher = Node(
@@ -36,8 +42,16 @@ def generate_launch_description():
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=['/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist'],
+        arguments=[
+            '/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist',
+            '/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan',
+        ],
         output='screen'
     )
 
-    return LaunchDescription([gz_sim, robot_state_publisher, spawn_robot, bridge])
+    return LaunchDescription([
+        gz_sim,
+        robot_state_publisher,
+        spawn_robot,
+        bridge
+    ])
