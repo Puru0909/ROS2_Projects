@@ -29,7 +29,7 @@ def generate_launch_description():
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[{'robot_description': robot_description}]
+        parameters=[{'robot_description': robot_description, 'use_sim_time': True}]
     )
 
     spawn_robot = Node(
@@ -45,13 +45,9 @@ def generate_launch_description():
         arguments=[
             '/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist',
             '/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan',
+            '/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock',
         ],
         output='screen'
     )
 
-    return LaunchDescription([
-        gz_sim,
-        robot_state_publisher,
-        spawn_robot,
-        bridge
-    ])
+    return LaunchDescription([gz_sim, robot_state_publisher, spawn_robot, bridge])
