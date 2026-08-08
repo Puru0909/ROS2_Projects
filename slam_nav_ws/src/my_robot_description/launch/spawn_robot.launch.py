@@ -46,6 +46,7 @@ def generate_launch_description():
             '/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist',
             '/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan',
             '/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock',
+            '/tf@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V',
         ],
         output='screen'
     )
