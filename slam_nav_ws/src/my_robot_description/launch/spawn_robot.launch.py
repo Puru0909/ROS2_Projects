@@ -46,9 +46,16 @@ def generate_launch_description():
             '/cmd_vel@geometry_msgs/msg/Twist]ignition.msgs.Twist',
             '/scan@sensor_msgs/msg/LaserScan[ignition.msgs.LaserScan',
             '/clock@rosgraph_msgs/msg/Clock[ignition.msgs.Clock',
-            '/tf@tf2_msgs/msg/TFMessage[ignition.msgs.Pose_V',
+            '/odom@nav_msgs/msg/Odometry[ignition.msgs.Odometry',
         ],
         output='screen'
     )
 
-    return LaunchDescription([gz_sim, robot_state_publisher, spawn_robot, bridge])
+    odom_to_tf = Node(
+        package='my_robot_description',
+        executable='odom_to_tf.py',
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+
+    return LaunchDescription([gz_sim, robot_state_publisher, spawn_robot, bridge, odom_to_tf])
