@@ -58,4 +58,18 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}]
     )
 
-    return LaunchDescription([gz_sim, robot_state_publisher, spawn_robot, bridge, odom_to_tf])
+    joint_state_publisher = Node(
+        package='joint_state_publisher',
+        executable='joint_state_publisher',
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+
+    return LaunchDescription([
+        gz_sim,
+        robot_state_publisher,
+        spawn_robot,
+        bridge,
+        odom_to_tf,
+        joint_state_publisher
+    ])
