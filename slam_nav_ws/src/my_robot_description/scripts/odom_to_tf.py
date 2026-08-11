@@ -19,7 +19,7 @@ class OdomToTF(Node):
         t.child_frame_id = 'base_link'
         t.transform.translation.x = msg.pose.pose.position.x
         t.transform.translation.y = msg.pose.pose.position.y
-        t.transform.translation.z = msg.pose.pose.position.z
+        t.transform.translation.z = msg.pose.pose.position.z 
         t.transform.rotation = msg.pose.pose.orientation
         self.br.sendTransform(t)
 
