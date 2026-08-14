@@ -4,7 +4,7 @@ project(my_robot_description)
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY urdf launch worlds config
+  DIRECTORY urdf launch worlds config maps
   DESTINATION share/${PROJECT_NAME}
 )
 
