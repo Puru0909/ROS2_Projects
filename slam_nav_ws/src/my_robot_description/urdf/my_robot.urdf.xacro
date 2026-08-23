@@ -11,7 +11,7 @@
   <xacro:property name="wheel_mass" value="0.5"/>
   <xacro:property name="wheel_separation" value="0.35"/>
 
-  <xacro:property name="caster_radius" value="0.02"/>
+  <xacro:property name="caster_radius" value="0.025"/>
   <xacro:property name="caster_mass" value="0.1"/>
 
   <xacro:macro name="box_inertia" params="m l w h">
@@ -119,7 +119,7 @@
       <parent link="base_link"/>
       <child link="${prefix}_wheel_link"/>
       <origin
-        xyz="0 ${reflect * wheel_separation/2} ${-chassis_height/2}"
+        xyz="-0.10 ${reflect * wheel_separation/2} ${-chassis_height/2}"
         rpy="0 0 0"/>
       <axis xyz="0 1 0"/>
     </joint>
